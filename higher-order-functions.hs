@@ -34,18 +34,18 @@ map' _ [] = []
 --map' f (x:xs) = f x:map' f xs
 map' f x = [f a | a <- x ]
 
-filter' :: (a -> Bool) -> [a] -> [a]
-filter' _ [] = []
-filter' f (x:xs)
-  | f x       = x:filter' f xs
-  | otherwise = filter' f xs
+--filter' :: (a -> Bool) -> [a] -> [a]
+--filter' _ [] = []
+--filter' f (x:xs)
+--  | f x       = x:filter' f xs
+--  | otherwise = filter' f xs
 --filter' f x = [ a | a <- x, f a == True ]
 
 quicksort' :: (Ord a) => [a] -> [a]
 quicksort' [] = []
 quicksort' (x:xs) = quicksort' (filter' (<=x) xs) ++ [x] ++ quicksort' (filter' (>x) xs)
 
--- find the largest number under Y that's divisible by 3829.
+-- find the largest number under b that's evenly divisible by a.
 largestDivisibleByUnder :: Int -> Int -> Int
 largestDivisibleByUnder a b = head (filter' (\x -> (mod x a) == 0) [b,b-1..])
 
@@ -53,7 +53,7 @@ largestDivisibleByUnder a b = head (filter' (\x -> (mod x a) == 0) [b,b-1..])
 sumOfAllOddSquares :: Int -> Int
 sumOfAllOddSquares y = sum (takeWhile (<y) (map' (^2) [1,3..y]))
 
-
+-- Collatz sequences
 -- We take a natural number. If that number is even, we divide it by two. If
 -- it's odd, we multiply it by 3 and then add 1 to that. We take the resulting
 -- number and apply the same thing to it, which produces a new number and so
@@ -76,7 +76,7 @@ numLongChains x y = length (filter' (\x ->length x>y) (map' chain [1..x]))
 -- lambdas
 addThree :: (Num a) => a -> a -> a -> a
 -- ug, don't get it... no help in lyah
-addThree = \x -> \y -> \z -> x + y + z
+addThree = (\x -> (\y -> (\z -> x + y + z)))
 
 --  left fold. It folds the list up from the left side. The binary function is
 --  applied between the starting value and the head of the list. That produces a
@@ -85,3 +85,42 @@ addThree = \x -> \y -> \z -> x + y + z
 foldl' :: (a -> a -> a) -> a -> [a] -> a
 foldl' _ a []     = a
 foldl' f a (x:xs) = foldl' f (f a x) xs
+
+--head' :: [a] -> a
+--head' [] = error "head': empty list"
+--head' (x:xs) = x
+
+takeWhile' :: (a -> Bool) -> [a] -> [a]
+takeWhile' _ []     = []
+takeWhile' f (x:xs)
+           | f x == True = x:takeWhile' f xs
+           | otherwise   = []
+
+elem' :: (Eq a) => a -> [a] -> Bool
+elem' _ [] = False
+elem' x (y:ys)
+  | x == y    = True
+  | otherwise = elem' x ys
+
+foldr' :: (a -> b -> b) -> b -> [a] -> b
+foldr' _ a []     = a
+foldr' f a (x:xs) = f x (foldr' f a xs)
+
+maximum' :: (Ord a) => [a] -> a
+maximum' = foldr1 (\x y -> max x y)
+
+reverse' :: [a] -> [a]
+reverse' = foldl (\acc x -> x : acc) []
+
+product' :: (Num a) => [a] -> a
+product' = foldl (\acc x -> x * acc) 1
+
+filter' :: (a -> Bool) -> [a] -> [a]
+--filter' f = foldr (\x acc -> (if (f x) then x:acc else acc)) []
+filter' f = foldl (\acc x -> (if (f x) then (acc++[x]) else acc)) []
+
+head' :: [a] -> a
+head' = foldr1 (\x _ -> x)
+
+last' :: [a] -> a
+last' = foldl1 (\acc _ -> acc)
