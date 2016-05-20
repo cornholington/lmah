@@ -124,3 +124,12 @@ head' = foldr1 (\x _ -> x)
 
 last' :: [a] -> a
 last' = foldl1 (\acc _ -> acc)
+
+
+scanl' :: (b -> a -> b) -> b -> [a] -> [b]
+scanl' _ a [] = [a]
+scanl' f a (x:xs) = a:scanl' f (f a x) xs
+
+scanr' :: (a -> b -> b) -> b -> [a] -> [b]
+scanr' _ a [] = [a]
+scanr' f a (x:xs) = (f x (scanr' f a xs)):[a]
