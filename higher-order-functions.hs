@@ -130,6 +130,43 @@ scanl' :: (b -> a -> b) -> b -> [a] -> [b]
 scanl' _ a [] = [a]
 scanl' f a (x:xs) = a:scanl' f (f a x) xs
 
+-- I suck at recursion
+-- gregf
+---- It's not that you suck at recursion. You apparently just suck at lazy
+---- evaluation. Rather than building bottom-up like you did with scanl, can
+---- you find the N-1 case?
 scanr' :: (a -> b -> b) -> b -> [a] -> [b]
 scanr' _ a [] = [a]
-scanr' f a (x:xs) = (f x (scanr' f a xs)):[a]
+--scanr' f a xs = (scanr' f (f (last xs) a) (init xs))++[a]
+scanr' f a (x:xs) =
+  let rest = (scanr' f a xs)
+  in f x (head rest):rest
+
+
+
+
+-- Let's answer us this question: How many elements does it take for the sum of
+-- the roots of all natural numbers to exceed 1000?
+sumOfRootsExceeds :: Double -> Int
+sumOfRootsExceeds x = length (takeWhile (<x) (scanl' (\a x -> a + sqrt x) 0 [1..]))
+
+sqrtSums :: Int
+sqrtSums = length (takeWhile (<1000) (scanl1 (+) (map sqrt [1..]))) + 1
+
+-- for function application...
+-- map ($ 3) [(4+), (10*), (^2), sqrt]
+-- [7.0,30.0,9.0,1.7320508075688772]
+
+-- Say we have a list of numbers and we want to turn them all into negative
+-- numbers
+negList :: (Num a, Ord a) => [a] -> [a]
+--negList = map (\x -> if x > 0 then (negate x) else x)
+--negList = map (\x -> negate (abs x))
+--negList = map (\x -> negate $ abs x)
+negList = map (negate . abs)
+
+-- how can we write this in point-free style?
+--fn x = ceiling (negate (tan (cos (max 50 x))))
+-- fn :: (Integral a, Floating a, Ord a) => a -> a
+fn = ceiling . negate . tan . cos . max 50
+fn' x = ceiling (negate (tan (cos (max 50 x))))
