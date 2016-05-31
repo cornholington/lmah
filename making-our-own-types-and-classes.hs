@@ -44,3 +44,14 @@ smul :: (Num t) => Vector t -> Vector t -> t
 smul (Vector x y z) (Vector x1 y1 z1) = (x*x1)+(y*y1)+(z*z1)
 
 data Either a b = Left a | Right b deriving (Eq, Ord, Read, Show)
+
+
+-- I don't understand Maybe and Either
+--data EitherMaybe a b = (Maybe a) (Maybe b) | Nothing
+
+--import qualified Data.Map as Map
+
+-- our own list type, a recursive type
+data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)
+-- somewhat equivalent to:
+-- data List a = Empty | Cons { listHead :: a, listTail :: List a} deriving (Show, Read, Eq, Ord)
